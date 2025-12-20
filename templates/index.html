@@ -136,20 +136,46 @@
                         </div>
                         <input type="text" id="autoUrl" 
                             class="w-full bg-transparent border-none text-[15px] text-ios-text placeholder-ios-subtext focus:ring-0 p-2.5 outline-none"
-                            placeholder="e.g. https://kickcharm.com">
+                            placeholder="e.g. https://wordpressdomain.com">
                     </div>
                 </div>
 
-                <!-- Syncing with Global Date (Handled by JS) -->
-                <div class="flex items-center gap-2 text-xs text-ios-subtext px-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    <span>Using selected date from above</span>
+                <!-- Simplified Date Controls -->
+                <div class="space-y-3">
+                    <!-- Standard Presets -->
+                    <div>
+                        <label class="ml-1 text-[13px] text-ios-gray uppercase font-semibold tracking-wide mb-1 block">Time Range</label>
+                        <div class="bg-ios-input p-1 rounded-xl flex">
+                            <button id="btnAutoToday" onclick="setAutoMode('today')" class="flex-1 py-1.5 rounded-lg text-xs md:text-sm font-medium text-ios-text transition-all duration-200">Today</button>
+                            <button id="btnAutoBoth" onclick="setAutoMode('both')" class="flex-1 py-1.5 rounded-lg text-xs md:text-sm font-medium text-ios-subtext hover:text-ios-text transition-all duration-200">Both</button>
+                            <button id="btnAutoYesterday" onclick="setAutoMode('yesterday')" class="flex-1 py-1.5 rounded-lg text-xs md:text-sm font-medium text-ios-subtext hover:text-ios-text transition-all duration-200">Yesterday</button>
+                        </div>
+                    </div>
+
+                    <!-- Numeric Range -->
+                    <div>
+                        <div class="flex justify-between items-baseline ml-1 mb-1">
+                            <label class="text-[13px] text-ios-gray uppercase font-semibold tracking-wide">Days Back</label>
+                            <span id="rangeDisplay" class="text-[11px] text-ios-blue font-medium opacity-0 transition-opacity"></span>
+                        </div>
+                        <div class="bg-ios-input p-1 rounded-xl flex gap-1">
+                            <button onclick="setAutoMode('range', 2)" id="btnRange2" class="flex-1 py-1.5 rounded-lg text-xs font-medium text-ios-subtext hover:text-ios-text transition-all duration-200">2</button>
+                            <button onclick="setAutoMode('range', 3)" id="btnRange3" class="flex-1 py-1.5 rounded-lg text-xs font-medium text-ios-subtext hover:text-ios-text transition-all duration-200">3</button>
+                            <button onclick="setAutoMode('range', 4)" id="btnRange4" class="flex-1 py-1.5 rounded-lg text-xs font-medium text-ios-subtext hover:text-ios-text transition-all duration-200">4</button>
+                            <button onclick="setAutoMode('range', 5)" id="btnRange5" class="flex-1 py-1.5 rounded-lg text-xs font-medium text-ios-subtext hover:text-ios-text transition-all duration-200">5</button>
+                            <button onclick="setAutoMode('range', 6)" id="btnRange6" class="flex-1 py-1.5 rounded-lg text-xs font-medium text-ios-subtext hover:text-ios-text transition-all duration-200">6</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mt-auto pt-4">
+                <div class="mt-auto pt-4 grid grid-cols-3 gap-3">
                      <button id="btnAutoStart" onclick="startAutoDiscovery()" 
-                            class="w-full bg-ios-btnbg text-ios-btntext font-semibold py-3.5 rounded-xl shadow-lg transition-all text-[15px] hover:bg-opacity-90 active:scale-95">
+                            class="col-span-2 bg-ios-btnbg text-ios-btntext font-semibold py-3.5 rounded-xl shadow-lg transition-all text-[15px] hover:bg-opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
                         Find & Scrape
+                    </button>
+                    <button id="btnAutoStop" onclick="stopAutoDiscovery(false)" disabled
+                            class="col-span-1 bg-ios-input text-ios-gray2 font-semibold py-3.5 rounded-xl shadow-none transition-all text-[15px] disabled:opacity-50">
+                        Stop
                     </button>
                 </div>
             </div>
@@ -162,7 +188,7 @@
                 <span class="text-[10px] md:text-[11px] uppercase font-bold text-ios-subtext tracking-wider">Discovery Logs</span>
             </div>
             <!-- Logs Container -->
-            <div id="autoLogs" class="flex-1 p-4 md:p-6 overflow-y-auto text-[12px] md:text-[13px] leading-relaxed font-mono custom-scrollbar absolute inset-0 mt-[41px]">
+            <div id="autoLogs" class="terminal-logs flex-1 p-4 md:p-6 overflow-y-auto text-[12px] md:text-[13px] leading-relaxed font-mono custom-scrollbar absolute inset-0 mt-[41px]">
                 <span class="text-ios-subtext opacity-50">Waiting for URL...</span>
             </div>
         </div>
