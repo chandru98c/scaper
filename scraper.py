@@ -231,7 +231,7 @@ def extract_official_link(post_url):
             row_text = row.get_text(" ", strip=True).lower()
             if "apply" in row_text or "link" in row_text or "click here" in row_text:
                 for link in row.find_all('a'):
-                    add_candidate(link, "Table Context", 60)
+                    add_candidate(link, "Table Context", 90) # Boosted to 90 to beat generic CompanyURLs
 
         # STRATEGY 2: KEYWORD NEIGHBORS (Medium Context)
         keywords = ["Apply Link", "Click Here", "Official Notification", "Apply Online", "Registration Link"]
@@ -241,19 +241,20 @@ def extract_official_link(post_url):
                 
                 # Check Parent <a>
                 parent = label.find_parent('a')
-                if parent: add_candidate(parent, f"Keyword ({kw})", 50)
+                if parent: add_candidate(parent, f"Keyword ({kw})", 90) # Boosted to 90
                 
                 # Check Next <a>
                 try:
                     nxt = label.find_next('a')
-                    if nxt: add_candidate(nxt, f"Next to ({kw})", 40)
+                    # Ensure the next link is reasonably close (not in footer)
+                    if nxt: add_candidate(nxt, f"Next to ({kw})", 90)
                 except: pass
 
         # STRATEGY 3: GLOBAL SMART SCAN
         # If we know the company name, check ALL links on page for it
         if company_keywords:
             for link in soup.find_all('a', href=True):
-                add_candidate(link, "Global Smart Scan", 20)
+                add_candidate(link, "Global Smart Scan", 10) # Lowered base to 10 so it only wins if no context found
 
         # DECISION TIME
         if not candidates: return None
