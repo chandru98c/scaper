@@ -80,15 +80,21 @@ class PoliteScraper:
 # Initialize the polite scraper
 scraper = PoliteScraper()
 
-def get_new_job_urls(sitemap_url, cutoff_date_str=None):
+def get_new_job_urls(sitemap_url, cutoff_date_str=None, end_date_str=None):
     if not cutoff_date_str:
         yesterday = datetime.now() - timedelta(days=1)
         cutoff_date = yesterday 
     else:
         cutoff_date = datetime.strptime(cutoff_date_str, "%Y-%m-%d")
 
+    # Parse End Date
+    end_date = datetime.now()
+    if end_date_str:
+        end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+        end_date = end_date.replace(hour=23, minute=59, second=59)
+
     print(f"Fetching sitemap: {sitemap_url}")
-    print(f"Looking for posts after: {cutoff_date.strftime('%Y-%m-%d')}")
+    print(f"Looking for posts between: {cutoff_date.strftime('%Y-%m-%d')} and {end_date.strftime('%Y-%m-%d')}")
     
     # Use the polite requester
     response = scraper.safe_request(sitemap_url)
@@ -103,7 +109,9 @@ def get_new_job_urls(sitemap_url, cutoff_date_str=None):
         try:
             dt_str = date_text.split("T")[0].split(" ")[0]
             dt_obj = datetime.strptime(dt_str, "%Y-%m-%d")
-            if dt_obj >= cutoff_date: return dt_str
+            # Check Range (Inclusive)
+            if cutoff_date <= dt_obj <= end_date: 
+                return dt_str
         except: return None
         return None
 
@@ -179,7 +187,22 @@ def extract_official_link(post_url):
                 'discord', 'pinterest', 'reddit', 'tiktok', 'snapchat', 
                 'openinapp', 'linktr.ee', 'bit.ly', 'goo.gl', 'tinyurl', 'cutt.ly'
             ]
-            if any(b in href.lower() for b in blacklist): return
+            
+            # Parse candidate URL to check domain specifically
+            try:
+                cand_parsed = urlparse(href)
+                cand_domain = cand_parsed.netloc.lower()
+                # Check if blacklist item is domain or suffix (e.g. sub.twitter.com or twitter.com)
+                if any(b == cand_domain or cand_domain.endswith('.' + b) for b in blacklist): 
+                    return
+                # Also check if blacklist item is INSIDE the domain (for match like 'sub.bit.ly')
+                if any(b in cand_domain for b in blacklist):
+                     return
+            except:
+                pass
+            
+            # Old buggy check was: if any(b in href.lower() for b in blacklist): return
+            # This matched 'x.com' inside 'netflix.com' query param.
             
             # Score Calculation
             score = base_score

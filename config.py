@@ -1,13 +1,6 @@
-# --- CONFIGURATION ---
+import os
 
-# PUT YOUR TARGET LINK (SITEMAP) HERE:
-SITEMAP_URL = 'https://job4freshers.co.in/post-sitemap1.xml'
-
-# OUTPUT FOLDER NAME:
-# The folder where the Excel files will be stored.
+# Scraper Configuration
 OUTPUT_FOLDER = 'scraped_data'
-
-# HOW MANY DAYS BACK TO SEARCH:
 DAYS_BACK = 2
-
-# ---------------------
+SITEMAP_URL = 'https://job4freshers.co.in/post-sitemap1.xml'
