@@ -137,6 +137,48 @@ def stream_auto():
 
     return Response(generate(), mimetype='text/event-stream')
 
+# --- HISTORY API ---
+@app.route('/api/files')
+def list_files():
+    if not os.path.exists(OUTPUT_FOLDER):
+        return {"files": []}
+    
+    files = []
+    for f in os.listdir(OUTPUT_FOLDER):
+        if f.endswith('.xlsx') or f.endswith('.csv'):
+            path = os.path.join(OUTPUT_FOLDER, f)
+            stat = os.stat(path)
+            # Create a nice object
+            files.append({
+                "name": f,
+                "size": f"{stat.st_size / 1024:.1f} KB",
+                "date": datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M'),
+                "timestamp": stat.st_mtime
+            })
+    
+    # Sort by Newest First
+    files.sort(key=lambda x: x['timestamp'], reverse=True)
+    return {"files": files}
+
+# --- OPEN API (Local Only) ---
+@app.route('/api/open/<filename>')
+def open_local_file(filename):
+    if not filename: return {"status": "error"}
+    path = os.path.join(OUTPUT_FOLDER, filename)
+    if os.path.exists(path):
+        import subprocess, sys
+        try:
+            if os.name == 'nt': # Windows
+                os.startfile(path)
+            elif sys.platform == 'darwin': # macOS
+                subprocess.call(('open', path))
+            else: # linux
+                subprocess.call(('xdg-open', path))
+            return {"status": "success"}
+        except Exception as e:
+            return {"status": "error", "msg": str(e)}
+    return {"status": "not found"}
+
 if __name__ == '__main__':
     import webbrowser
     from threading import Timer

@@ -194,10 +194,22 @@
         </div>
 
     </div>
+
+    <!-- ROW 3: HISTORY -->
+    <div class="w-full bg-ios-card rounded-3xl shadow-2xl border border-ios-border overflow-hidden flex flex-col transition-colors duration-300">
+        <div class="px-5 py-4 border-b border-ios-border flex justify-between items-center bg-ios-bg bg-opacity-30">
+            <h2 class="text-lg font-bold text-ios-text flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-ios-subtext" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Recent Downloads
+            </h2>
+            <button onclick="loadHistory()" class="text-ios-blue text-xs font-bold hover:opacity-75 transition">Refresh</button>
+        </div>
+        <div id="historyList" class="flex-1 max-h-[300px] overflow-y-auto custom-scrollbar">
+            <div class="p-6 text-center text-ios-subtext text-xs">Loading...</div>
+        </div>
+    </div>
     
     </main>
-
-    <!-- Unified Modals -->
 
     <!-- Unified Modals -->
     {% include 'components/modals.html' %}
@@ -209,5 +221,6 @@
     <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
     <script src="{{ url_for('static', filename='js/stream.js') }}"></script>
     <script src="{{ url_for('static', filename='js/feature_auto.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/history.js') }}"></script>
 </body>
 </html>
