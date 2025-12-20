@@ -8,6 +8,6 @@ SITEMAP_URL = 'https://job4freshers.co.in/post-sitemap1.xml'
 OUTPUT_FOLDER = 'scraped_data'
 
 # HOW MANY DAYS BACK TO SEARCH:
-DAYS_BACK = 5
+DAYS_BACK = 2
 
 # ---------------------

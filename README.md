@@ -4,9 +4,11 @@ This tool scrapes job postings from a specified sitemap URL, filtering for recen
 
 ## Features
 
+-   **Polite & Human-Like**: Uses rotating browser profiles (Chrome, Edge, Mac/Windows) and randomized delays to mimic real human behavior and avoid detection.
+-   **Smart Probability Scoring**: Uses an advanced scoring algorithm to evaluate potential links based on context (tables, labels), URL content (company name, keywords), and visual cues to pick the *single best* "Apply" link.
+-   **Intelligent Filtering**: Automatically blacklists social media (Telegram, WhatsApp), video sites, and redirect services to ensure only legitimate career links are captured.
 -   **Configurable**: Easily change the target sitemap, search range (days), and output folder via `config.py`.
--   **Dynamic Filenames**: Output files are named with the site name, timestamp, and date range (e.g., `freshershunt_20251218_193500_from_2025-12-13_to_2025-12-18.xlsx`).
--   **Organized Output**: Automatically creates a separate folder (default: `scraped_data`) to store all Excel files.
+-   **Robust Output**: Automatically creates timestamped Excel files in `scraped_data`, handling file permission errors gracefully.
 -   **Robust Parsing**: Handles both standard XML sitemaps and HTML table-based sitemaps.
 
 ## Prerequisites
