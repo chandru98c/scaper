@@ -1,14 +1,22 @@
-from flask import Flask, render_template, request, Response, send_file
+from flask import Flask, render_template, request, Response, send_file, send_from_directory
 import random
 import time
 import pandas as pd
 import os
 from datetime import datetime, timedelta
-import scraper as job_scraper
 
-OUTPUT_FOLDER = 'scraped_data'
+# Import Services
+from services.http_client import PoliteScraper
+from services.sitemap_parser import get_new_job_urls
+from services.extractor import extract_official_link
+# Feature 2 Import
+from services.auto_discovery.runner import AutoDiscoveryRunner
+from services.config import OUTPUT_FOLDER
 
 app = Flask(__name__)
+
+# Initialize Global Scraper to reuse session
+global_scraper = PoliteScraper()
 
 # Route for the Home Page
 @app.route('/')
@@ -40,7 +48,8 @@ def stream():
         yield f"data: [INFO] Fetching sitemap: {sitemap_url}\n\n"
         yield f"data: [INFO] Searching Range: {start_date_str} to {end_date_str}\n\n"
 
-        items = job_scraper.get_new_job_urls(sitemap_url, start_date_str, end_date_str)
+        # Call Service with scraper instance
+        items = get_new_job_urls(global_scraper, sitemap_url, start_date_str, end_date_str)
         
         if not items:
             yield "data: [ERROR] No new URLs found or Sitemap unreachable.\n\n"
@@ -59,7 +68,8 @@ def stream():
             yield f"data: [{i+1}/{total}] Checking: {url}\n\n"
             
             try:
-                data = job_scraper.extract_official_link(url)
+                # Call Service
+                data = extract_official_link(global_scraper, url)
                 
                 if data:
                     title_sh = data['title'][:40]
@@ -77,7 +87,7 @@ def stream():
             except Exception as e:
                 yield f"data: [WARN] Error checking URL: {e}\n\n"
 
-            # Polite Wait: Random 4-8s (Simulating human reading time)
+            # Polite Wait: Random 4-8s
             wait = random.randint(4, 8)
             for s in range(wait):
                time.sleep(1)
@@ -104,8 +114,28 @@ def stream():
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    path = os.path.join(OUTPUT_FOLDER, filename)
-    return send_file(path, as_attachment=True)
+    return send_from_directory(OUTPUT_FOLDER, filename, as_attachment=True)
+
+# --- FEATURE 2 ENDPOINT ---
+@app.route('/stream_auto')
+def stream_auto():
+    homepage_url = request.args.get('homepage_url')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    if not homepage_url:
+        def generate_error():
+            yield "data: [ERROR] No URL provided\n\n"
+            yield "data: close\n\n"
+        return Response(generate_error(), mimetype='text/event-stream')
+
+    def generate():
+        runner = AutoDiscoveryRunner(global_scraper)
+        for log in runner.run(homepage_url, start_date, end_date, OUTPUT_FOLDER):
+            yield f"data: {log}\n\n"
+        yield "data: close\n\n"
+
+    return Response(generate(), mimetype='text/event-stream')
 
 if __name__ == '__main__':
     import webbrowser

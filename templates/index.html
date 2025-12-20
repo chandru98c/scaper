@@ -4,123 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Job Scraper Pro</title>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}?v=2" type="image/png">
+    <link rel="icon" href="{{ url_for('static', filename='scaper.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        
-        .terminal-logs { font-family: 'Menlo', 'Monaco', 'Courier New', monospace; background-color: var(--bg-color); color: var(--text-color); }
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-        
-        /* Modal Glass Effect */
-        .modal-glass {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-        
-        /* Calendar Styles */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .day-cell { 
-            height: 36px; width: 36px; display: flex; align-items: center; justify-content: center; 
-            font-size: 14px; font-weight: 500; border-radius: 50%; cursor: pointer; transition: all 0.2s; position: relative; z-index: 10;
-        }
-        .day-cell:hover:not(.disabled) { background-color: #3A3A3C; }
-        
-        /* Range Styling - Circles (String of Pearls) */
-        .day-cell.selected { 
-            background-color: #0A84FF; 
-            color: white; 
-            font-weight: 600; 
-            z-index: 20;
-            box-shadow: 0 2px 8px rgba(10, 132, 255, 0.4);
-        }
-        
-        /* Middle Range: Light Blue Circles */
-        .day-cell.range-bg { 
-            background-color: rgba(10, 132, 255, 0.2); 
-            color: #60a5fa;
-            border-radius: 50%; /* Make it Circle */
-            font-weight: 500;
-        }
-
-        /* Clean up unused connectors */
-        .day-cell.selected.range-start::before, .day-cell.selected.range-end::before {
-            display: none;
-        }
-
-        /* Fix Today visibility */
-        .day-cell.today { color: #0A84FF; font-weight: 700; }
-        .day-cell.selected.today { color: #FFFFFF !important; }
-        
-        /* Fix Today visibility when selected */
-        .day-cell.today { color: #0A84FF; font-weight: 700; }
-        .day-cell.selected.today { color: #FFFFFF !important; }
-
-        /* Connectors using Pseudo-elements */
-    </style>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        ios: { 
-                            bg: 'var(--bg-color)', 
-                            card: 'var(--card-bg)', 
-                            input: 'var(--input-bg)', 
-                            text: 'var(--text-color)',
-                            subtext: 'var(--subtext-color)',
-                            blue: '#0A84FF', 
-                            red: '#FF453A', 
-                            green: '#30D158', 
-                            border: 'var(--border-color)',
-                            btnbg: 'var(--btn-primary-bg)',
-                            btntext: 'var(--btn-primary-text)'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        :root {
-            /* Light Theme (Strict Match to Image) */
-            --bg-color: #F3F3F5;
-            --card-bg: #FFFFFF;
-            --input-bg: #F7F7F9; 
-            --text-color: #000000;
-            --subtext-color: #6E6E73;
-            --border-color: #E5E5EA;
-            --btn-primary-bg: #000000;    /* Black Buttons in Light Mode */
-            --btn-primary-text: #FFFFFF;
-            --shadow-color: rgba(0, 0, 0, 0.08);
-        }
-        .dark {
-            /* Dark Theme (High Contrast) */
-            --bg-color: #000000;          /* Pure Black */
-            --card-bg: #121212;           /* Very Dark Gray for separation */
-            --input-bg: #1C1C1E;
-            --text-color: #FFFFFF;
-            --subtext-color: #98989D;
-            --border-color: #333333;
-            --btn-primary-bg: #FFFFFF;    /* White Buttons in Dark Mode for Contrast */
-            --btn-primary-text: #000000;
-            --shadow-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s; }
-        
-        /* ... existing styles ... */
-    </style>
+    <script src="{{ url_for('static', filename='js/tailwind_config.js') }}"></script>
 </head>
-<body class="bg-ios-bg text-ios-text min-h-screen flex items-center justify-center p-4 selection:bg-ios-blue selection:text-white dark transition-colors duration-300">
+<body class="bg-ios-bg text-ios-text min-h-screen p-4 selection:bg-ios-blue selection:text-white dark transition-colors duration-300 flex flex-col items-center">
 
-    <!-- Responsive Wrapper -->
-    <div class="w-full max-w-6xl flex flex-col md:flex-row gap-4 md:gap-6 items-start transition-all duration-300">
-        
-        <!-- LEFT CARD -->
-         <div class="w-full md:w-[420px] bg-ios-card rounded-3xl shadow-2xl border border-ios-border overflow-hidden flex flex-col order-1 md:order-2 transition-colors duration-300">
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-6xl flex flex-col gap-6 md:gap-8 my-10">
+
+        <!-- ROW 1: SCRAPER -->
+        <div class="flex flex-col md:flex-row gap-4 md:gap-6 items-stretch transition-all duration-300">
+            
+            <!-- LEFT CARD -->
+             <div class="w-full md:w-[420px] bg-ios-card rounded-3xl shadow-2xl border border-ios-border overflow-hidden flex flex-col order-1 md:order-2 transition-colors duration-300">
             
             <!-- Header -->
             <div class="px-3 pt-3 pb-2 md:px-5 md:pt-5 flex justify-between items-start">
@@ -133,14 +32,19 @@
                 </div>
                 <div class="flex flex-col items-end gap-2">
                     <div id="statusBadge" class="px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-wider bg-ios-input text-ios-subtext">Ready</div>
-                    
-                    <!-- Theme Toggle -->
-                    <button onclick="toggleTheme()" class="bg-ios-input p-1.5 rounded-full hover:bg-opacity-80 transition-all group">
-                       <!-- Sun (Light) -->
-                       <svg id="iconSun" class="w-4 h-4 text-orange-400 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                       <!-- Moon (Dark) -->
-                       <svg id="iconMoon" class="w-4 h-4 text-ios-blue block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    <div class="flex items-center gap-2">
+                        <label class="ml-1 text-[13px] text-ios-subtext uppercase font-semibold tracking-wide">Theme</label>
+               
+
+                        <!-- Theme Toggle -->
+                        <button onclick="toggleTheme()" class="bg-ios-input p-1.5 rounded-full hover:bg-opacity-80 transition-all group">
+                            <!-- Sun (Light) -->
+                            <svg id="iconSun" class="w-4 h-4 text-orange-400 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                            <!-- Moon (Dark) -->
+                            <svg id="iconMoon" class="w-4 h-4 text-ios-blue block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                     </button>
+                    </div>
+
                 </div>
             </div>
 
@@ -169,6 +73,7 @@
                     <!-- Toggle Button -->
                     <div class="mt-2 flex bg-ios-input p-1 rounded-xl">
                         <button id="btnToday" onclick="setMode('today')" class="flex-1 py-2 text-xs font-semibold rounded-lg bg-ios-card text-ios-text shadow-sm transition-all border border-ios-border">Today</button>
+                        <button id="btnYesterday" onclick="setMode('yesterday')" class="flex-1 py-2 text-xs font-semibold rounded-lg text-ios-subtext hover:text-ios-text transition-all">Yesterday</button>
                         <button id="btnCustom" onclick="setMode('custom')" class="flex-1 py-2 text-xs font-semibold rounded-lg text-ios-subtext hover:text-ios-text transition-all">Custom</button>
                     </div>
                 </div>
@@ -182,8 +87,8 @@
                 </div>
             
                 <!-- INSTRUCTIONS TOGGLE -->
-                <div class="mt-4 pt-3 border-t border-[#303030] flex justify-center">
-                    <button onclick="openInstructions()" class="text-[11px] font-semibold text-ios-blue hover:text-white transition flex items-center gap-1.5 opacity-80 hover:opacity-100 p-2">
+                <div class="mt-4 pt-3 border-t border-ios-border flex justify-center">
+                    <button onclick="openInstructions()" class="text-[11px] font-semibold text-ios-blue hover:text-ios-text transition flex items-center gap-1.5 opacity-80 hover:opacity-100 p-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
                         </svg>
@@ -194,528 +99,89 @@
         </div>
 
         <!-- RIGHT CARD: Terminal -->
-          <div class="w-full md:flex-1 bg-ios-card rounded-3xl shadow-2xl border border-ios-border overflow-hidden flex flex-col h-[300px] md:h-[520px] order-2 md:order-1 transition-colors duration-300">
-            <div class="px-4 py-3 bg-ios-input border-b border-ios-border flex justify-between items-center">
-                <div class="flex gap-1.5"><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#FF5F57]"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#FEBC2E]"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#28C840]"></div></div>
-                <span class="text-[10px] md:text-[11px] uppercase font-bold text-ios-subtext tracking-wider">Scraper Logs</span>
-            </div>
-            <div id="logs" class="terminal-logs flex-1 p-4 md:p-6 overflow-y-auto text-[12px] md:text-[13px] leading-relaxed font-mono custom-scrollbar">
-                <span class="text-ios-subtext opacity-50">System ready. Waiting for command...</span>
+          <div class="w-full md:flex-1 bg-ios-card rounded-3xl shadow-2xl border border-ios-border overflow-hidden order-2 md:order-1 transition-colors duration-300 relative h-[300px] md:h-auto">
+            <!-- Inner Wrapper: Absolute on Desktop to match Left Card Height -->
+            <div class="flex flex-col h-full w-full absolute inset-0">
+                <div class="px-4 py-3 bg-ios-input border-b border-ios-border flex justify-between items-center flex-shrink-0">
+                    <div class="flex gap-1.5"><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#FF5F57]"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#FEBC2E]"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#28C840]"></div></div>
+                    <span class="text-[10px] md:text-[11px] uppercase font-bold text-ios-subtext tracking-wider">Scraper Logs</span>
+                </div>
+                <div id="logs" class="terminal-logs flex-1 p-4 md:p-6 overflow-y-auto text-[12px] md:text-[13px] leading-relaxed font-mono custom-scrollbar">
+                    <span class="text-ios-subtext opacity-50">System ready. Waiting for command...</span>
+                </div>
             </div>
         </div>
         
     </div>  
-    </div>
-
-    <!-- INSTRUCTIONS MODAL -->
-    <div id="instructionsModal" class="fixed inset-0 modal-glass z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-ios-card border border-ios-border rounded-3xl w-full max-w-md shadow-2xl transform scale-95 opacity-0 transition-all duration-200" id="instCard">
-            <div class="p-6 relative">
-                <!-- Close X -->
-                <button onclick="closeInstructions()" class="absolute top-4 right-4 text-ios-subtext hover:text-ios-text p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-
-                <div class="flex items-center gap-3 mb-4 text-ios-text">
-                    <div class="p-2 bg-ios-blue bg-opacity-20 rounded-lg text-ios-blue">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-                    </div>
-                    <h2 class="text-lg font-bold">Sitemap Guide</h2>
-                </div>
-                
-                <div class="space-y-4 text-[13px] text-ios-subtext leading-relaxed font-medium">
-                    <div class="flex gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-ios-input flex items-center justify-center text-xs font-bold text-ios-text">1</span>
-                        <p>Find the <strong>Sitemap</strong> of your target WordPress site. usually accessible at <code class="bg-ios-input px-1 text-ios-blue">/sitemap.xml</code> or <code class="bg-ios-input px-1 text-ios-blue">/wp-sitemap.xml</code>.</p>
-                    </div>
-                    <div class="flex gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-ios-input flex items-center justify-center text-xs font-bold text-ios-text">2</span>
-                        <p>Locate the <strong>sub-sitemap</strong> where dates are listed (e.g., <span class="text-ios-subtext italic">post-sitemap.xml</span>).</p>
-                    </div>
-                    <div class="flex gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-ios-input flex items-center justify-center text-xs font-bold text-ios-text">3</span>
-                        <p><strong>Crucial Step:</strong> Visit each sub-sitemap. Look for the one containing today's date or very recent dates.</p>
-                    </div>
-                    <div class="flex gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-ios-input flex items-center justify-center text-xs font-bold text-ios-text">4</span>
-                        <p>Copy that specific URL and paste it into the field.</p>
-                    </div>
-                </div>
-
-                <button onclick="closeInstructions()" class="w-full mt-6 py-3 bg-ios-input hover:bg-[#333] text-white font-semibold rounded-xl transition">Got it</button>
+    
+    <!-- ROW 2: FUTURE FEATURES -->
+    <div class="flex flex-col md:flex-row gap-4 md:gap-6 items-stretch transition-all duration-300">
+        
+        <!-- NEW LEFT CARD: Auto Discovery Input -->
+        <div class="w-full md:w-[420px] bg-ios-card rounded-3xl shadow-2xl border border-ios-border overflow-hidden flex flex-col transition-colors duration-300 min-h-[300px]">
+            <div class="px-5 pt-5 pb-2">
+                <h2 class="text-xl md:text-2xl font-bold tracking-tight text-ios-text">Auto Discovery</h2>
+                <p class="text-ios-subtext text-xs md:text-sm mt-0.5 font-medium">Enter Homepage URL</p>
             </div>
-        </div>
-    </div>
-
-    </div>
-
-    <!-- CALENDAR MODAL -->
-    <div id="calendarModal" class="fixed inset-0 modal-glass z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-ios-card border border-ios-border rounded-3xl w-full max-w-[360px] shadow-2xl transform scale-95 opacity-0 transition-all duration-200" id="modalCard">
             
-            <div class="p-5">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-ios-text text-lg font-bold">Select Dates</h2>
-                    <span class="text-xs text-ios-blue font-medium bg-ios-blue bg-opacity-10 px-2 py-1 rounded">Max 9 Days</span>
-                </div>
-                
-                <!-- Month Nav -->
-                <div class="flex justify-between items-center mb-4 text-ios-text font-semibold px-2">
-                    <button onclick="changeMonth(-1)" class="text-ios-subtext hover:text-ios-text p-2">&lt;</button>
-                    <span id="currentMonthYear"></span>
-                    <button onclick="changeMonth(1)" class="text-ios-subtext hover:text-ios-text p-2">&gt;</button>
+            <div class="p-6 flex-1 flex flex-col gap-4">
+                <!-- Input -->
+                <div>
+                    <label class="ml-1 text-[13px] text-ios-gray uppercase font-semibold tracking-wide">Website URL</label>
+                    <div class="mt-1 bg-ios-input rounded-xl flex items-center p-1">
+                        <div class="pl-3 pr-2 text-ios-gray">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input type="text" id="autoUrl" 
+                            class="w-full bg-transparent border-none text-[15px] text-ios-text placeholder-ios-subtext focus:ring-0 p-2.5 outline-none"
+                            placeholder="e.g. https://kickcharm.com">
+                    </div>
                 </div>
 
-                <!-- Grid -->
-                <div class="grid grid-cols-7 gap-1 mb-2 text-center text-[11px] text-ios-gray font-bold uppercase tracking-wide">
-                    <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                <!-- Syncing with Global Date (Handled by JS) -->
+                <div class="flex items-center gap-2 text-xs text-ios-subtext px-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    <span>Using selected date from above</span>
                 </div>
-                <!-- Actual Calendar -->
-                <div id="calendarGrid" class="calendar-grid place-items-center"></div>
 
-                <!-- Modal Actions -->
-                <div class="flex gap-3 mt-6">
-                    <button onclick="closeCalendar()" class="flex-1 py-3 rounded-xl bg-ios-input text-ios-text font-medium hover:bg-opacity-80 transition">Cancel</button>
-                    <button onclick="confirmDateSelection()" class="flex-1 py-3 rounded-xl bg-ios-blue text-white font-bold hover:bg-opacity-90 transition shadow-lg shadow-blue-900/20">Done</button>
+                <div class="mt-auto pt-4">
+                     <button id="btnAutoStart" onclick="startAutoDiscovery()" 
+                            class="w-full bg-ios-btnbg text-ios-btntext font-semibold py-3.5 rounded-xl shadow-lg transition-all text-[15px] hover:bg-opacity-90 active:scale-95">
+                        Find & Scrape
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- DOWNLOAD MODAL -->
-    <div id="downloadModal" class="fixed inset-0 modal-glass z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-ios-card border border-ios-border rounded-3xl w-full max-w-[360px] shadow-2xl transform scale-95 opacity-0 transition-all duration-200 text-center" id="dlCard">
-            <div class="p-6">
-                <div class="w-16 h-16 bg-ios-green bg-opacity-10 text-ios-green rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                </div>
-                <h2 class="text-ios-text text-xl font-bold mb-2">Scraping Complete</h2>
-                <p class="text-ios-subtext text-sm mb-6">Your excel report is ready.</p>
-                
-                <div class="space-y-3">
-                    <button id="dlConfirmBtn" onclick="" class="w-full py-3.5 bg-ios-blue text-white font-bold rounded-xl shadow-lg hover:bg-opacity-90 transition">Download File</button>
-                    <button onclick="closeDownloadModal()" class="w-full py-3.5 bg-transparent text-ios-subtext font-semibold hover:text-ios-text transition">Close</button>
-                </div>
+        <!-- NEW RIGHT CARD: Auto Logs -->
+        <div class="w-full md:flex-1 bg-ios-card rounded-3xl shadow-2xl border border-ios-border overflow-hidden flex flex-col transition-colors duration-300 min-h-[300px] relative">
+            <div class="px-4 py-3 bg-ios-input border-b border-ios-border flex justify-between items-center">
+                <div class="flex gap-1.5"><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#FF5F57]"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#FEBC2E]"></div><div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#28C840]"></div></div>
+                <span class="text-[10px] md:text-[11px] uppercase font-bold text-ios-subtext tracking-wider">Discovery Logs</span>
+            </div>
+            <!-- Logs Container -->
+            <div id="autoLogs" class="flex-1 p-4 md:p-6 overflow-y-auto text-[12px] md:text-[13px] leading-relaxed font-mono custom-scrollbar absolute inset-0 mt-[41px]">
+                <span class="text-ios-subtext opacity-50">Waiting for URL...</span>
             </div>
         </div>
+
     </div>
+    
+    </main>
+
+    <!-- Unified Modals -->
+
+    <!-- Unified Modals -->
+    {% include 'components/modals.html' %}
 
     <a id="downloadLink" class="hidden"></a>
     
-    <script>
-        // --- THEME LOGIC ---
-        function toggleTheme() {
-            const body = document.body;
-            if (body.classList.contains('dark')) {
-                body.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-        
-        // Init Theme
-        if (localStorage.getItem('theme') === 'light') {
-            document.body.classList.remove('dark');
-        } else {
-            document.body.classList.add('dark');
-        }
-
-        // State
-        let searchMode = 'today';
-        let currentDate = new Date();
-        // Committed selection (User must confirm modal to update these)
-        let finalStart = null; 
-        let finalEnd = null;
-        // Draft selection (Inside modal)
-        let draftStart = new Date();
-        let draftEnd = new Date();
-
-        const MAX_DAYS = 9;
-
-        // Strip time util
-        function strip(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
-        
-        // Init drafts to today, but final to NULL so we know user hasnt picked yet
-        draftStart = strip(new Date());
-        draftEnd = strip(new Date());
-
-        // Helper for new start logic
-        function setNewStart(date, today) {
-            draftStart = date;
-            
-            // Attempt to range to Today
-            if (date.getTime() <= today.getTime()) {
-                const diff = (today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
-                if (diff <= MAX_DAYS) {
-                    draftEnd = today;
-                } else {
-                    // Start Only (Today is too far)
-                    draftEnd = date; 
-                }
-            } else {
-                // Future date? Just set single
-                draftEnd = date;
-            }
-        }
-
-        // --- UI LOGIC ---
-        function setMode(mode) {
-            searchMode = mode;
-            const btnToday = document.getElementById('btnToday');
-            const btnCustom = document.getElementById('btnCustom');
-
-            if (mode === 'today') {
-                btnToday.className = "flex-1 py-2 text-xs font-semibold rounded-lg bg-ios-card text-ios-text shadow-sm transition-all border border-ios-border";
-                btnCustom.className = "flex-1 py-2 text-xs font-semibold rounded-lg text-ios-subtext hover:text-ios-text transition-all";
-                // Reset text if switching away
-                updateDisplayRange();
-            } else {
-                btnCustom.className = "flex-1 py-2 text-xs font-semibold rounded-lg bg-ios-card text-ios-text shadow-sm transition-all border border-ios-border";
-                btnToday.className = "flex-1 py-2 text-xs font-semibold rounded-lg text-ios-subtext hover:text-ios-text transition-all";
-                
-                // Open Calendar immediately
-                openCalendar();
-            }
-            validateState(); // Re-check validity on mode switch
-        }
-
-        function validateState() {
-            const url = document.getElementById('sitemapUrl').value.trim();
-            const startBtn = document.getElementById('startBtn');
-            const hasUrl = url.length > 0;
-            
-            let hasDates = false;
-            if (searchMode === 'today') {
-                hasDates = true;
-            } else {
-                // In custom mode, user must have picked dates
-                hasDates = (finalStart !== null && finalEnd !== null);
-            }
-
-            if (hasUrl && hasDates) {
-                startBtn.disabled = false;
-                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else {
-                startBtn.disabled = true;
-                startBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-        }
-        function updateDisplayRange() {
-            const btn = document.getElementById('btnCustom');
-            
-            if (searchMode === 'today' || !finalStart) {
-                btn.innerText = "Custom";
-                return;
-            }
-            
-            const options = { month: 'short', day: 'numeric' };
-            const sStr = finalStart.toLocaleDateString('en-US', options);
-            const eStr = finalEnd.toLocaleDateString('en-US', options);
-            
-            if (finalStart.getTime() === finalEnd.getTime()) {
-                btn.innerText = sStr;
-            } else {
-                btn.innerText = `${sStr} - ${eStr}`;
-            }
-        }
-        
-        // --- MODAL LOGIC ---
-        function openCalendar() {
-            // Restore draft from final if exists, else today
-            if (finalStart) {
-                draftStart = new Date(finalStart);
-                draftEnd = new Date(finalEnd);
-            } else {
-                 draftStart = strip(new Date());
-                 draftEnd = strip(new Date());
-            }
-            currentDate = new Date(draftStart);
-            
-            renderCalendar();
-            // ... (rest is same)
-            
-            const modal = document.getElementById('calendarModal');
-            const card = document.getElementById('modalCard');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                card.classList.remove('scale-95', 'opacity-0');
-                card.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function closeCalendar() {
-            const modal = document.getElementById('calendarModal');
-            const card = document.getElementById('modalCard');
-            
-            card.classList.remove('scale-100', 'opacity-100');
-            card.classList.add('scale-95', 'opacity-0');
-            modal.classList.add('opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                // If closed without selection, and no previous selection, revert to Today
-                if (searchMode === 'custom' && !finalStart) {
-                    setMode('today');
-                }
-            }, 200);
-        }
-
-        // --- INSTRUCTIONS MODAL LOGIC ---
-        function openInstructions() {
-            const modal = document.getElementById('instructionsModal');
-            const card = document.getElementById('instCard');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                card.classList.remove('scale-95', 'opacity-0');
-                card.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function closeInstructions() {
-            const modal = document.getElementById('instructionsModal');
-            const card = document.getElementById('instCard');
-             
-            card.classList.remove('scale-100', 'opacity-100');
-            card.classList.add('scale-95', 'opacity-0');
-            modal.classList.add('opacity-0');
-            setTimeout(() => modal.classList.add('hidden'), 200);
-        }
-
-        function confirmDateSelection() {
-            finalStart = new Date(draftStart);
-            finalEnd = new Date(draftEnd);
-            updateDisplayRange();
-            closeCalendar();
-            validateState(); // Re-check after picking
-        }
-
-        function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            document.getElementById('currentMonthYear').textContent = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' });
-
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const grid = document.getElementById('calendarGrid');
-            grid.innerHTML = '';
-
-            for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
-
-            const today = strip(new Date());
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                const date = new Date(year, month, d);
-                const time = date.getTime();
-                const el = document.createElement('div');
-                el.className = 'day-cell';
-                el.textContent = d;
-
-                // Selection Logic
-                const sTime = draftStart.getTime();
-                const eTime = draftEnd.getTime();
-
-                if (time === sTime) {
-                   el.classList.add('selected');
-                   if (eTime > sTime) el.classList.add('range-start'); // Use ::after connector
-                }
-                
-                if (time === eTime) {
-                    el.classList.add('selected');
-                    if (eTime > sTime) el.classList.add('range-end'); // Use ::before connector
-                }
-
-                if (time > sTime && time < eTime) el.classList.add('range-bg');
-                
-                if (time === today.getTime()) el.classList.add('today');
-
-                el.onclick = () => selectDate(date);
-                grid.appendChild(el);
-            }
-        }
-
-        function selectDate(date) {
-            const time = date.getTime();
-            const sTime = draftStart.getTime();
-            
-            // Standardize today to avoid time offsets
-            const today = strip(new Date()); 
-            
-            // Interaction Logic:
-            // 1. If clicking BEFORE current start -> It's a New Start.
-            // 2. If clicking AFTER current start:
-            //    a. If range is within limits -> Update End.
-            //    b. If range exceeds limits -> Treat as New Start.
-            
-            if (time < sTime) {
-                setNewStart(date, today);
-            } else if (time > sTime) {
-                 const diffDays = Math.round((time - sTime) / (1000 * 60 * 60 * 24));
-                 
-                 if (diffDays <= MAX_DAYS) {
-                     // Valid extension
-                     draftEnd = date;
-                 } else {
-                     // Too far: New Start
-                     setNewStart(date, today);
-                 }
-            } else {
-                // Clicked exactly on start: Reset to single or toggle? 
-                // Let's treat as New Start to re-trigger "To Today" logic if applicable, 
-                // or just keep as is. Best default: New Start (Reset range).
-                setNewStart(date, today);
-            }
-            renderCalendar();
-        }
-
-        function setNewStart(date, today) {
-            draftStart = date;
-            
-            // Smart Helper: Auto-select range up to Today IF it fits.
-            // Check diff between Date and Today
-            if (date.getTime() <= today.getTime()) {
-                const diffDays = Math.round((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-                
-                if (diffDays <= MAX_DAYS) {
-                    draftEnd = today;
-                } else {
-                    // Start Only (Today is too far)
-                    draftEnd = date; 
-                }
-            } else {
-                // Future date? Start Only.
-                draftEnd = date;
-            }
-        }
-        
-        function changeMonth(delta) {
-            currentDate.setMonth(currentDate.getMonth() + delta);
-            renderCalendar();
-        }
-
-        // --- SCRAPER LOGIC ---
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const logsDiv = document.getElementById('logs');
-        const statusBadge = document.getElementById('statusBadge');
-        const sitemapInput = document.getElementById('sitemapUrl');
-        let eventSource = null;
-
-        updateDisplayRange(); // init 
-        
-        // Add Input Listener
-        sitemapInput.addEventListener('input', validateState);
-        // Initial Check
-        validateState();
-
-        function startScraping() {
-            const url = sitemapInput.value.trim();
-            let sDate, eDate;
-
-            // Determine Dates based on Mode
-            if (searchMode === 'today') {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                sDate = `${year}-${month}-${day}`;
-                eDate = sDate;
-            } else {
-                if (!finalStart || !finalEnd) {
-                    alert("Please pick a date range first.");
-                    return;
-                }
-                // Fix custom range timezone issue as well
-                const sYear = finalStart.getFullYear();
-                const sMonth = String(finalStart.getMonth() + 1).padStart(2, '0');
-                const sDay = String(finalStart.getDate()).padStart(2, '0');
-                sDate = `${sYear}-${sMonth}-${sDay}`;
-                
-                const eYear = finalEnd.getFullYear();
-                const eMonth = String(finalEnd.getMonth() + 1).padStart(2, '0');
-                const eDay = String(finalEnd.getDate()).padStart(2, '0');
-                eDate = `${eYear}-${eMonth}-${eDay}`;
-            }
-
-            if (!url) return;
-
-            // UI Init
-            if (eventSource) eventSource.close();
-            logsDiv.innerHTML = '';
-            startBtn.disabled = true;
-            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            startBtn.innerText = 'Running...';
-            stopBtn.disabled = false;
-            stopBtn.classList.remove('bg-ios-input', 'text-ios-gray2', 'disabled:opacity-50');
-            stopBtn.classList.add('bg-ios-red', 'text-white');
-            statusBadge.classList.replace('bg-ios-input', 'bg-ios-green');
-            statusBadge.classList.replace('text-ios-gray2', 'text-black');
-            statusBadge.innerText = 'Active';
-
-            eventSource = new EventSource(`/stream?sitemap_url=${encodeURIComponent(url)}&start_date=${sDate}&end_date=${eDate}`);
-
-            eventSource.onmessage = (e) => {
-                const data = e.data;
-                if (data === 'close') { stopScraping(true); return; }
-                if (data.startsWith('[DOWNLOAD]')) { openDownloadModal(data.replace('[DOWNLOAD] ', '').trim()); return; }
-                
-                let cls = 'text-gray-400';
-                let txt = data;
-                if (data.includes('[FOUND]')) { cls = 'text-ios-green font-semibold'; txt = "✓ " + data.replace('[FOUND] ', ''); }
-                else if (data.includes('[WARN]')) cls = 'text-ios-red';
-                else if (data.includes('[INFO]')) cls = 'text-ios-blue';
-
-                const div = document.createElement('div');
-                div.className = `mb-1 ${cls}`;
-                div.textContent = txt;
-                logsDiv.appendChild(div);
-                logsDiv.scrollTop = logsDiv.scrollHeight;
-            };
-            eventSource.onerror = () => stopScraping(false);
-        }
-        function manualStop() { stopScraping(false); }
-        function stopScraping(complete) {
-            if (eventSource) { eventSource.close(); eventSource = null; }
-            startBtn.disabled = false;
-            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            startBtn.innerText = 'Start';
-            stopBtn.disabled = true;
-            stopBtn.classList.add('bg-ios-input', 'text-ios-gray2');
-            stopBtn.classList.remove('bg-ios-red', 'text-white');
-            statusBadge.classList.replace('bg-ios-green', 'bg-ios-input');
-            statusBadge.classList.replace('text-black', 'text-ios-gray2');
-            statusBadge.innerText = complete ? 'Done' : 'Stopped';
-        }
-        function downloadFile(f) { window.location.href = `/download/${f}`; closeDownloadModal(); }
-        
-        function openDownloadModal(filename) {
-            const modal = document.getElementById('downloadModal');
-            const card = document.getElementById('dlCard');
-            const btn = document.getElementById('dlConfirmBtn');
-            
-            btn.onclick = () => downloadFile(filename);
-            
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                card.classList.remove('scale-95', 'opacity-0');
-                card.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function closeDownloadModal() {
-            const modal = document.getElementById('downloadModal');
-            const card = document.getElementById('dlCard');
-            
-            card.classList.remove('scale-100', 'opacity-100');
-            card.classList.add('scale-95', 'opacity-0');
-            modal.classList.add('opacity-0');
-            setTimeout(() => modal.classList.add('hidden'), 200);
-        }
-    </script>
+    <!-- Scripts (Order Matters: Calendar defines globals used by UI/Stream) -->
+    <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stream.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/feature_auto.js') }}"></script>
 </body>
 </html>

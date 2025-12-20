@@ -1,0 +1,70 @@
+body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s; }
+
+.terminal-logs { font-family: 'Menlo', 'Monaco', 'Courier New', monospace; background-color: var(--bg-color); color: var(--text-color); }
+::-webkit-scrollbar { width: 0px; background: transparent; }
+
+/* Modal Glass Effect */
+.modal-glass {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Calendar Styles */
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.day-cell { 
+    height: 36px; width: 36px; display: flex; align-items: center; justify-content: center; 
+    font-size: 14px; font-weight: 500; border-radius: 50%; cursor: pointer; transition: all 0.2s; position: relative; z-index: 10;
+}
+.day-cell:hover:not(.disabled) { background-color: #3A3A3C; }
+
+/* Range Styling - Circles (String of Pearls) */
+.day-cell.selected { 
+    background-color: #0A84FF; 
+    color: white; 
+    font-weight: 600; 
+    z-index: 20;
+    box-shadow: 0 2px 8px rgba(10, 132, 255, 0.4);
+}
+
+/* Middle Range: Light Blue Circles */
+.day-cell.range-bg { 
+    background-color: rgba(10, 132, 255, 0.2); 
+    color: #60a5fa;
+    border-radius: 50%; /* Make it Circle */
+    font-weight: 500;
+}
+
+/* Clean up unused connectors */
+.day-cell.selected.range-start::before, .day-cell.selected.range-end::before {
+    display: none;
+}
+
+/* Fix Today visibility */
+.day-cell.today { color: #0A84FF; font-weight: 700; }
+.day-cell.selected.today { color: #FFFFFF !important; }
+
+:root {
+    /* Light Theme (Strict Match to Image) */
+    --bg-color: #F3F3F5;
+    --card-bg: #FFFFFF;
+    --input-bg: #F7F7F9; 
+    --text-color: #000000;
+    --subtext-color: #6E6E73;
+    --border-color: #E5E5EA;
+    --btn-primary-bg: #000000;    /* Black Buttons in Light Mode */
+    --btn-primary-text: #FFFFFF;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+}
+.dark {
+    /* Dark Theme (High Contrast) */
+    --bg-color: #000000;          /* Pure Black */
+    --card-bg: #121212;           /* Very Dark Gray for separation */
+    --input-bg: #1C1C1E;
+    --text-color: #FFFFFF;
+    --subtext-color: #98989D;
+    --border-color: #333333;
+    --btn-primary-bg: #FFFFFF;    /* White Buttons in Dark Mode for Contrast */
+    --btn-primary-text: #000000;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,62 @@
+<!-- SHARED MODAL OVERLAY -->
+<div id="modalOverlay" class="fixed inset-0 modal-glass z-50 hidden flex items-center justify-center p-4 transition-opacity duration-200 opacity-0">
+
+    <!-- 1. INSTRUCTIONS CARD -->
+    <div id="instCard" class="bg-ios-card border border-ios-border rounded-3xl w-full max-w-md shadow-2xl transform scale-95 hidden transition-all duration-200 absolute">
+        <div class="p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-ios-subtext hover:text-ios-text p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <div class="flex items-center gap-3 mb-4 text-ios-text">
+                <div class="p-2 bg-ios-blue bg-opacity-20 rounded-lg text-ios-blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                </div>
+                <h2 class="text-lg font-bold">Sitemap Guide</h2>
+            </div>
+            <div class="space-y-4 text-[13px] text-ios-subtext leading-relaxed font-medium">
+                <div class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-ios-input flex items-center justify-center text-xs font-bold text-ios-text">1</span><p>Find the <strong>Sitemap</strong> (e.g., <code class="bg-ios-input px-1 text-ios-blue">/sitemap.xml</code>).</p></div>
+                <div class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-ios-input flex items-center justify-center text-xs font-bold text-ios-text">2</span><p>Locate the <strong>post-sitemap.xml</strong>.</p></div>
+                <div class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-ios-input flex items-center justify-center text-xs font-bold text-ios-text">3</span><p>Visit it and ensure recent dates exist.</p></div>
+                <div class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-ios-input flex items-center justify-center text-xs font-bold text-ios-text">4</span><p>Copy that URL here.</p></div>
+            </div>
+            <button onclick="closeModal()" class="w-full mt-6 py-3 bg-ios-input text-ios-text font-semibold rounded-xl transition hover:bg-opacity-80">Got it</button>
+        </div>
+    </div>
+
+    <!-- 2. CALENDAR CARD -->
+    <div id="calendarCard" class="bg-ios-card border border-ios-border rounded-3xl w-full max-w-[360px] shadow-2xl transform scale-95 hidden transition-all duration-200 absolute">
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-ios-text text-lg font-bold">Select Dates</h2>
+                <span class="text-xs text-ios-blue font-medium bg-ios-blue bg-opacity-10 px-2 py-1 rounded">Max 9 Days</span>
+            </div>
+            <div class="flex justify-between items-center mb-4 text-ios-text font-semibold px-2">
+                <button onclick="changeMonth(-1)" class="text-ios-subtext hover:text-ios-text p-2">&lt;</button>
+                <span id="currentMonthYear"></span>
+                <button onclick="changeMonth(1)" class="text-ios-subtext hover:text-ios-text p-2">&gt;</button>
+            </div>
+            <div class="grid grid-cols-7 gap-1 mb-2 text-center text-[11px] text-ios-gray font-bold uppercase tracking-wide"><div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div></div>
+            <div id="calendarGrid" class="calendar-grid place-items-center"></div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeModal()" class="flex-1 py-3 rounded-xl bg-ios-input text-ios-text font-medium hover:bg-opacity-80 transition">Cancel</button>
+                <button onclick="confirmDateSelection()" class="flex-1 py-3 rounded-xl bg-ios-blue text-white font-bold hover:bg-opacity-90 transition shadow-lg shadow-blue-900/20">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. DOWNLOAD CARD -->
+    <div id="dlCard" class="bg-ios-card border border-ios-border rounded-3xl w-full max-w-[360px] shadow-2xl transform scale-95 hidden transition-all duration-200 absolute text-center">
+        <div class="p-6">
+            <div class="w-16 h-16 bg-ios-green bg-opacity-10 text-ios-green rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+            </div>
+            <h2 class="text-ios-text text-xl font-bold mb-2">Scraping Complete</h2>
+            <p class="text-ios-subtext text-sm mb-6">Your excel report is ready.</p>
+            <div class="space-y-3">
+                <button id="dlConfirmBtn" class="w-full py-3.5 bg-ios-blue text-white font-bold rounded-xl shadow-lg hover:bg-opacity-90 transition">Download File</button>
+                <button onclick="closeModal()" class="w-full py-3.5 bg-transparent text-ios-subtext font-semibold hover:text-ios-text transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+</div>
