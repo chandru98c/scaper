@@ -12,6 +12,22 @@ from services.extractor import extract_official_link
 # Feature 2 Import
 from services.auto_discovery.runner import AutoDiscoveryRunner
 from services.config import OUTPUT_FOLDER
+import os
+
+# --- CONIFGURE SHARED DRIVE PATH ---
+# Primary path for Google Drive for Desktop
+SHARED_DRIVE_PATH = r"G:\My Drive\sharded_scaper\seen_apply_link.txt"
+# Fallback: Check if we can find it in standard User folder if G: fails
+LOCAL_FALLBACK_PATH = os.path.join(os.path.expanduser("~"), "Google Drive", "sharded_scaper", "seen_apply_link.txt")
+
+def get_shared_history_file():
+    """Returns the path if valid, else None"""
+    if os.path.exists(os.path.dirname(SHARED_DRIVE_PATH)):
+        return SHARED_DRIVE_PATH
+    if os.path.exists(os.path.dirname(LOCAL_FALLBACK_PATH)):
+        return LOCAL_FALLBACK_PATH
+    return None
+
 
 app = Flask(__name__)
 
@@ -34,6 +50,24 @@ def stream():
     def generate():
         yield "data: [START] Initializing Scraper...\n\n"
         
+        # --- SHARED HISTORY INIT ---
+        seen_links = set()
+        shared_history_path = get_shared_history_file()
+        
+        if shared_history_path and os.path.exists(shared_history_path):
+            try:
+                yield f"data: [INFO] Loading shared history from: {shared_history_path}\n\n"
+                with open(shared_history_path, "r", encoding="utf-8") as f:
+                    seen_links = {line.strip() for line in f if line.strip()}
+                yield f"data: [INFO] Loaded {len(seen_links)} links from history.\n\n"
+            except Exception as e:
+                yield f"data: [WARN] Failed to read shared history: {e}\n\n"
+        elif shared_history_path:
+             # File doesn't exist but folder does, we will create it on first write
+             yield f"data: [INFO] Shared history file will be created at: {shared_history_path}\n\n"
+        else:
+            yield "data: [WARN] Shared Drive folder not found. Running in ISOLATED mode (no duplicate protection).\n\n"
+
         # Date Logic
         if not start_date_param:
             # Fallback (Should typically be provided by UI)
@@ -72,16 +106,38 @@ def stream():
                 data = extract_official_link(global_scraper, url)
                 
                 if data:
+                    clean_apply_link = data['link'].strip()
+                    is_dup = False
+                    
+                    # --- DUPLICATE CHECK ---
+                    if clean_apply_link in seen_links:
+                         yield f"data: [INFO] Duplicate found in history (will mark RED in Excel).\n\n"
+                         is_dup = True
+                    else:
+                        # Only add to history if it's NEW
+                        seen_links.add(clean_apply_link)
+                        if shared_history_path:
+                            try:
+                                with open(shared_history_path, "a", encoding="utf-8") as f:
+                                    f.write(clean_apply_link + "\n")
+                            except Exception:
+                                pass # formatting error
+                    
+                    # Valid Job (New or Duplicate)
                     title_sh = data['title'][:40]
-                    yield f"data: [FOUND] {title_sh}... ({data['match']})\n\n"
+                    msg_type = "DUPLICATE" if is_dup else "FOUND"
+                    yield f"data: [{msg_type}] {title_sh}... ({data['match']})\n\n"
+                    
                     results.append({
                         'Date Posted': post_date,
                         'Job Title': data['title'],
                         'Apply Link': data['link'],
                         'Link Text': data['text'],
                         'Context': data['match'],
-                        'Source Post': url
+                        'Source Post': url,
+                        'Status': 'Duplicate' if is_dup else 'New'
                     })
+
                 else:
                     yield "data: [SKIP] No confident link found.\n\n"
             except Exception as e:
@@ -100,10 +156,27 @@ def stream():
             
             if not os.path.exists(OUTPUT_FOLDER):
                 os.makedirs(OUTPUT_FOLDER)
-                
-            pd.DataFrame(results).to_excel(filepath, index=False)
             
-            yield f"data: [SUCCESS] Saved {len(results)} jobs.\n\n"
+            # Create DataFrame
+            df = pd.DataFrame(results)
+            
+            # --- STYLING LOGIC ---
+            def highlight_duplicates(row):
+                if row['Status'] == 'Duplicate':
+                    return ['background-color: #ffcccc'] * len(row)
+                return [''] * len(row)
+
+            # Apply style and save
+            # We need to use a context manager or direct to_excel with styler
+            try:
+                styler = df.style.apply(highlight_duplicates, axis=1)
+                styler.to_excel(filepath, index=False, engine='openpyxl')
+            except Exception as e:
+                # Fallback if styling fails (e.g. missing openpyxl)
+                df.to_excel(filepath, index=False)
+                yield f"data: [WARN] Saved without styling (Error: {e})\n\n"
+
+            yield f"data: [SUCCESS] Saved {len(results)} jobs ({len([r for r in results if r['Status']=='Duplicate'])} duplicates).\n\n"
             yield f"data: [DOWNLOAD] {filename}\n\n" # Front end will catch this to trigger download
         else:
             yield "data: [DONE] Checked all, but found no valid links.\n\n"
