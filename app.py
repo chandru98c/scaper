@@ -252,6 +252,88 @@ def open_local_file(filename):
             return {"status": "error", "msg": str(e)}
     return {"status": "not found"}
 
+# --- AGENT-BASED ENDPOINT ---
+@app.route('/stream_agent')
+def stream_agent():
+    """
+    New Agent-Based Scraping Endpoint.
+    
+    Uses the Goal-Based Agent architecture for intelligent,
+    adaptive scraping with automatic recovery.
+    
+    Query Parameters:
+        target_url: Starting URL for extraction
+        start_date: Filter start date (YYYY-MM-DD)
+        end_date: Filter end date (YYYY-MM-DD)
+        target_jobs: Number of jobs to extract (default: 50)
+        max_time: Maximum execution time in minutes (default: 60)
+    """
+    target_url = request.args.get('target_url')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    target_jobs = int(request.args.get('target_jobs', 50))
+    max_time = int(request.args.get('max_time', 60))
+    
+    if not target_url:
+        def generate_error():
+            yield "data: [ERROR] No target URL provided\n\n"
+            yield "event: close\ndata: close\n\n"
+        return Response(generate_error(), mimetype='text/event-stream')
+    
+    def generate():
+        try:
+            # Import agent module
+            from services.agent import CareerBoardAgent, ScrapingGoal
+            from services.agent.goal import QualityConstraints, ResourceLimits
+            
+            # Create configured goal
+            goal = ScrapingGoal(
+                target_valid_jobs=target_jobs,
+                quality=QualityConstraints(max_error_rate=0.15),
+                resources=ResourceLimits(max_execution_time_seconds=max_time * 60)
+            )
+            
+            # Create and run agent
+            agent = CareerBoardAgent(goal=goal, output_folder=OUTPUT_FOLDER)
+            
+            for log in agent.run(target_url, start_date, end_date):
+                yield f"data: {log}\n\n"
+            
+            # Send final status
+            status = agent.get_status()
+            yield f"data: [FINAL] {status['goal']}\n\n"
+            
+        except Exception as e:
+            yield f"data: [FATAL] Agent error: {str(e)}\n\n"
+        
+        yield "event: close\ndata: close\n\n"
+    
+    return Response(generate(), mimetype='text/event-stream')
+
+
+# --- AGENT STATUS API ---
+@app.route('/api/agent/status')
+def agent_status():
+    """Get information about the agent system."""
+    return {
+        "version": "2.0.0",
+        "architecture": "Goal-Based Agent",
+        "components": [
+            "Goal Module (explicit objectives)",
+            "World Model (environment state)",
+            "Strategy Planner (dynamic planning)",
+            "Recovery Engine (failure handling)",
+            "Orchestrator (control loop)"
+        ],
+        "strategies": [
+            "sitemap_crawl",
+            "auto_discovery",
+            "api_extraction",
+            "google_cache",
+            "wayback_machine"
+        ]
+    }
+
 if __name__ == '__main__':
     import webbrowser
     from threading import Timer
