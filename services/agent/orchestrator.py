@@ -40,10 +40,14 @@ class CareerBoardAgent:
     SHARED_DRIVE_PATH = r"G:\My Drive\sharded_scaper\seen_apply_link.txt"
     LOCAL_FALLBACK_PATH = os.path.join(os.path.expanduser("~"), "Google Drive", "sharded_scaper", "seen_apply_link.txt")
     
+    # World Model persistence file (stores site knowledge across sessions)
+    WORLD_MODEL_FILE = "world_model.json"
+    
     def __init__(
         self,
         goal: Optional[ScrapingGoal] = None,
-        output_folder: str = "scraped_data"
+        output_folder: str = "scraped_data",
+        persist_world_model: bool = True
     ):
         """
         Initialize the agent.
@@ -51,12 +55,22 @@ class CareerBoardAgent:
         Args:
             goal: Scraping goal (defaults to 50 jobs)
             output_folder: Folder for saving results
+            persist_world_model: If True, saves/loads world model for memory across restarts
         """
         self.goal = goal or ScrapingGoal(target_valid_jobs=50)
         self.world_model = WorldModel()
+        self.output_folder = output_folder
+        self.persist_world_model = persist_world_model
+        
+        # Set world model persistence path
+        self._world_model_path = os.path.join(output_folder, self.WORLD_MODEL_FILE)
+        
+        # AUTO-LOAD: Restore previous knowledge if available
+        if persist_world_model:
+            self._load_world_model()
+        
         self.planner = StrategyPlanner(self.goal, self.world_model)
         self.recovery = RecoveryEngine(self.goal, self.world_model, self.planner)
-        self.output_folder = output_folder
         
         # Lazy-load scraper to avoid circular imports
         self._scraper = None
@@ -64,6 +78,22 @@ class CareerBoardAgent:
         # Current execution state
         self._current_plan: Optional[Plan] = None
         self._new_apply_links: List[str] = []
+    
+    def _load_world_model(self) -> bool:
+        """Load world model from disk if available."""
+        if os.path.exists(self._world_model_path):
+            loaded = self.world_model.load(self._world_model_path)
+            if loaded:
+                print(f"[MEMORY] Loaded world model: {len(self.world_model.sites)} sites known")
+            return loaded
+        return False
+    
+    def _save_world_model(self):
+        """Save world model to disk for persistence."""
+        if self.persist_world_model:
+            os.makedirs(self.output_folder, exist_ok=True)
+            self.world_model.save(self._world_model_path)
+
     
     @property
     def scraper(self):
@@ -115,6 +145,7 @@ class CareerBoardAgent:
             )
         
         yield f"[AGENT] CareerBoard Agent v2.0 initialized"
+        yield f"[MEMORY] Remembers {len(self.world_model.sites)} sites from previous runs"
         yield f"[GOAL] Target: Extract {self.goal.target_valid_jobs} valid jobs"
         yield f"[GOAL] Date Range: {self.goal.date_range[0]} to {self.goal.date_range[1]}"
         yield f"[TARGET] {target_url}"
@@ -178,6 +209,10 @@ class CareerBoardAgent:
         if self._new_apply_links and history_path:
             self.world_model.save_to_shared_history(history_path, self._new_apply_links)
             yield f"[HISTORY] Saved {len(self._new_apply_links)} new links to shared history"
+        
+        # AUTO-SAVE: Persist world model for next run
+        self._save_world_model()
+        yield f"[MEMORY] Saved world model: {len(self.world_model.sites)} sites remembered"
         
         # Final status
         summary = self.goal.get_summary()
